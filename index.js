@@ -29,19 +29,31 @@ async function run() {
         await client.connect();
         const categoryCollection = client.db("vegistDB").collection("categories");
         const vegetableCollection = client.db("vegistDB").collection("vegetables");
+        const userCollection = client.db("vegistDB").collection("users");
 
+
+        // user related api
+        app.post('/user', async (req, res) => {
+            const user = req.body
+            const result = await userCollection.insertOne(user);
+            res.send(result)
+        })
+        app.get('/user' , async (req , res)=>{
+            const result = await  userCollection.find().toArray();
+            res.send(result)
+        })
 
         // category related api
         app.get('/categories', async (req, res) => {
             const result = await categoryCollection.find().toArray();
             res.send(result)
         })
-        app.get('/categories/:category' , async(req , res)=>{
-            const {category} = req.params;
-            const result = await vegetableCollection.find({category : category}).toArray();
+        app.get('/categories/:category', async (req, res) => {
+            const { category } = req.params;
+            const result = await vegetableCollection.find({ category: category }).toArray();
             res.send(result)
         })
-        app.get('/products', async(req , res)=>{
+        app.get('/products', async (req, res) => {
             const result = await vegetableCollection.find().toArray();
             res.send(result)
         })
@@ -51,7 +63,8 @@ async function run() {
             const query = { _id: new ObjectId(id) }
             const result = await vegetableCollection.findOne(query)
             res.send(result)
-          })
+        })
+
 
 
 
