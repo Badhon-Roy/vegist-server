@@ -28,7 +28,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         const categoryCollection = client.db("vegistDB").collection("categories");
-        const vegetableCollection = client.db("vegistDB").collection("vegetables");
+        const productsCollection = client.db("vegistDB").collection("products");
         const userCollection = client.db("vegistDB").collection("users");
 
 
@@ -50,18 +50,18 @@ async function run() {
         })
         app.get('/categories/:category', async (req, res) => {
             const { category } = req.params;
-            const result = await vegetableCollection.find({ category: category }).toArray();
+            const result = await productsCollection.find({ category: category }).toArray();
             res.send(result)
         })
         app.get('/products', async (req, res) => {
-            const result = await vegetableCollection.find().toArray();
+            const result = await productsCollection.find().toArray();
             res.send(result)
         })
 
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
-            const result = await vegetableCollection.findOne(query)
+            const result = await productsCollection.findOne(query)
             res.send(result)
         })
 
@@ -71,7 +71,7 @@ async function run() {
 
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
