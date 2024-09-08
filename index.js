@@ -28,10 +28,8 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         const categoryCollection = client.db("vegistDB").collection("categories");
-        const productsCollection = client.db("vegistDB").collection("products");
+        const vegetablesCollection = client.db("vegistDB").collection("vegetables");
         const userCollection = client.db("vegistDB").collection("users");
-
-
         // user related api
         app.post('/user', async (req, res) => {
             const user = req.body
@@ -50,18 +48,18 @@ async function run() {
         })
         app.get('/categories/:category', async (req, res) => {
             const { category } = req.params;
-            const result = await productsCollection.find({ category: category }).toArray();
+            const result = await vegetablesCollection.find({ category: category }).toArray();
             res.send(result)
         })
         app.get('/products', async (req, res) => {
-            const result = await productsCollection.find().toArray();
+            const result = await vegetablesCollection.find().toArray();
             res.send(result)
         })
 
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
-            const result = await productsCollection.findOne(query)
+            const result = await vegetablesCollection.findOne(query)
             res.send(result)
         })
 
