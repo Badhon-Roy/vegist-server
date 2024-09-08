@@ -40,8 +40,8 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result)
         })
-        app.get('/user' , async (req , res)=>{
-            const result = await  userCollection.find().toArray();
+        app.get('/user', async (req, res) => {
+            const result = await userCollection.find().toArray();
             res.send(result)
         })
 
@@ -69,7 +69,7 @@ async function run() {
 
 
         // add to card related api
-        app.post('/addToCard', async (req , res) =>{
+        app.post('/addToCard', async (req, res) => {
             const product = req.body;
             const result = await addToCardCollection.insertOne(product);
             res.send(result);
@@ -78,11 +78,17 @@ async function run() {
         app.get('/addToCard', async (req, res) => {
             let query = {};
             if (req?.query?.email) {
-              query = { email: req?.query?.email }
+                query = { email: req?.query?.email }
             }
             const result = await addToCardCollection.find(query).toArray();
             res.send(result)
-          })
+        })
+        app.delete('/addToCard/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await addToCardCollection.deleteOne(query);
+            res.send(result);
+        })
 
 
 
