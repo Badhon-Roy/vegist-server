@@ -29,7 +29,11 @@ async function run() {
         await client.connect();
         const categoryCollection = client.db("vegistDB").collection("categories");
         const vegetablesCollection = client.db("vegistDB").collection("vegetables");
+        const addToCardCollection = client.db("vegistDB").collection("addedCards");
         const userCollection = client.db("vegistDB").collection("users");
+
+
+
         // user related api
         app.post('/user', async (req, res) => {
             const user = req.body
@@ -62,6 +66,23 @@ async function run() {
             const result = await vegetablesCollection.findOne(query)
             res.send(result)
         })
+
+
+        // add to card related api
+        app.post('/addToCard', async (req , res) =>{
+            const product = req.body;
+            const result = await addToCardCollection.insertOne(product);
+            res.send(result);
+        })
+
+        app.get('/addToCard', async (req, res) => {
+            let query = {};
+            if (req?.query?.email) {
+              query = { email: req?.query?.email }
+            }
+            const result = await addToCardCollection.find(query).toArray();
+            res.send(result)
+          })
 
 
 
