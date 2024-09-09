@@ -7,12 +7,14 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
     origin: [
-        'https://vegist-fdd93.web.app/',
+        'https://vegist-fdd93.web.app',
         'http://localhost:5173',
         'http://localhost:5174',
         'http://localhost:5175'
     ],
-    optionsSuccessStatus: 200,
+    methods: ['GET','POST', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 200
 }));
 app.use(express.json());
 
