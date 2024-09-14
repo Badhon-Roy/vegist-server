@@ -129,6 +129,11 @@ async function run() {
     app.post('/addToCard', async (req, res) => {
         try {
             const product = req.body;
+            const query = {product_id : product?.product_id}
+            const isAvailable = await addToCardCollection.findOne(query)
+            if(isAvailable){
+                return res.status(409).send({ message: 'Product is already added to the cart' });
+            }
             const result = await addToCardCollection.insertOne(product);
             res.send(result);
         } catch (error) {
@@ -183,6 +188,12 @@ async function run() {
     app.post('/favorite', async (req, res) => {
         try {
             const query = req.body;
+            const p = {product_id: query?.product_id}
+            const isAvailable = await favoriteCollection.findOne(p)
+            console.log(isAvailable);
+            if(isAvailable){
+                return res.status(409).send({ message: 'You have already added this product to your cart.' });
+            }
             const result = await favoriteCollection.insertOne(query);
             res.send(result)
         }
