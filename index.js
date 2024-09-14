@@ -12,7 +12,7 @@ app.use(cors({
         'http://localhost:5174',
         'http://localhost:5175'
     ],
-    methods: ['GET','POST', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200
 }));
@@ -51,6 +51,7 @@ async function run() {
     const vegetablesCollection = db.collection('vegetables');
     const addToCardCollection = db.collection('addedCards');
     const userCollection = db.collection('users');
+    const favoriteCollection = db.collection('favorites');
 
     // User related API
     app.post('/user', async (req, res) => {
@@ -158,6 +159,59 @@ async function run() {
             res.status(500).send({ message: 'Server Error' });
         }
     });
+
+
+    // favorite added related api
+    app.get('/favorite', async (req, res) => {
+        try {
+            const query = req?.query?.email ? { email: req.query.email } : {};
+            const favoriteProducts = await favoriteCollection.find(query).toArray();
+            const productIds = favoriteProducts.map(fav => new ObjectId(fav?.product_id));
+            if (!productIds || productIds === 0) {
+                return res.status(404).send({ message: 'No favorite products found for this email' });
+            }
+            const result = await vegetablesCollection.find({ _id: { $in: productIds } }).toArray();
+            res.send(result)
+        } catch (error) {
+            console.error('Error adding product to cart:', error);
+            res.status(500).send({ message: 'Server Error' });
+        }
+    })
+
+
+
+    app.post('/favorite', async (req, res) => {
+        try {
+            const query = req.body;
+            const result = await favoriteCollection.insertOne(query);
+            res.send(result)
+        }
+        catch (error) {
+            console.error('Error adding product to cart:', error);
+            res.status(500).send({ message: 'Server Error' });
+        }
+    })
+
+    app.delete('/favorite/:id', async (req, res) => {
+        try {
+            const id = req.params.id; 
+            const query = { product_id: id };
+            const favoriteProduct = await favoriteCollection.findOne(query);
+    
+            if (!favoriteProduct) {
+                return res.status(404).send({ message: 'Favorite product not found' });
+            }
+            const result = await favoriteCollection.deleteOne(query);
+    
+            res.send(result)
+        } catch (error) {
+            console.error('Error deleting favorite product:', error);
+            res.status(500).send({ message: 'Server Error' });
+        }
+    });
+
+
+
 }
 
 // Initial run of the app
