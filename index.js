@@ -124,6 +124,11 @@ async function run() {
             res.status(500).send({ message: 'Server Error' });
         }
     });
+    app.post('/products', async(req , res)=>{
+        const product = req.body;
+        const result = await vegetablesCollection.insertOne(product);
+        res.send(result);
+    })
 
     // Add to card related API
     app.post('/addToCard', async (req, res) => {
